@@ -1,4 +1,5 @@
-# Adonis fullstack application
+# sunlight-cafe - Adonis fullstack application 
+A more efficient system to manage you food chain business
 
 This is the fullstack boilerplate for AdonisJs, it comes pre-configured with.
 
