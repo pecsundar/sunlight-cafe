@@ -6,6 +6,7 @@
 
 const Menu = use('App/Models/Menu')
 const Item = use('App/Models/Item')
+const Store = use('App/Models/Store')
 const Itemstock = use('App/Models/Itemstock')
 const Database = use('Database')
 
@@ -210,6 +211,26 @@ class MenuController {
     let retMsg = {}
     retMsg.message = (menu) ? 'Menu Price updated successfully' : 'Update failed'
     return response.json(retMsg)
+
+ }
+
+ /**
+ * @swagger
+ * /store:
+ *   get:
+ *     tags:
+ *      - "Store"
+ *     summary: Get all store
+ *     description: "List all store in Sunlight Cafe"
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: All menus
+ */
+ async store ({ params, response, view }) {
+    const store = await Store.all()
+    return response.json(store)
 
  }
 }

@@ -25,9 +25,10 @@ Route
 
     // Roues for the api's
     Route.get('/menus/:storeid?', 'MenuController.index')//.middleware('auth')
-    Route.put('/reduce-item-stock/', 'MenuController.itemStock').middleware('auth')
+    Route.put('/reduce-item-stock/', 'MenuController.itemStock')//.middleware('auth')
     Route.get('/stock-level/:storeid', 'MenuController.stockCheck')//.middleware('auth')
     Route.post('/update-price/', 'MenuController.updatePrice')//.middleware('auth')
+    Route.get('/store/', 'MenuController.store')//.middleware('auth')
 
     // Route.get('/orders/:id', 'OrderController.show').middleware('auth')
     // Route.post('/orders', 'OrderController.store').validator('CreateOrder').middleware('auth')
