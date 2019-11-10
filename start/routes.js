@@ -28,6 +28,7 @@ Route
     Route.put('/reduce-item-stock/', 'MenuController.itemStock')//.middleware('auth')
     Route.get('/stock-level/:storeid', 'MenuController.stockCheck')//.middleware('auth')
     Route.post('/update-price/', 'MenuController.updatePrice')//.middleware('auth')
+    Route.put('/receive-order/', 'MenuController.receiveOrder')//.middleware('auth')
     Route.get('/store/', 'MenuController.store')//.middleware('auth')
 
     // Route.get('/orders/:id', 'OrderController.show').middleware('auth')

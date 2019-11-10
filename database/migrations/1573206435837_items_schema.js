@@ -9,6 +9,7 @@ class ItemsSchema extends Schema {
       table.increments()
       table.string('name').notNullable()
       table.string('uom').notNullable()
+      table.boolean('auto_order').default(false)
       table.timestamps()
     })
   }

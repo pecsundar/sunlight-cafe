@@ -170,7 +170,17 @@ class MenuController {
  */
  async stockCheck ({ params, response, view }) {
     const itemstock = await Database
-    .raw('SELECT items.name, stock.qoh FROM itemstocks stock INNER JOIN items ON stock.item_id = items.id WHERE stock.qoh < stock.MIN AND stock.store_id = ?', [params.storeid])
+    .raw('  SELECT items.name, stock.qoh, stock.MIN, stock.qoh - stock.MIN AS criticaltopup, \
+            CASE \
+            WHEN stock.qoh <= 0 THEN \'NO STOCK\' \
+            WHEN stock.qoh <= stock.MIN THEN \'CRITICAL LOW STOCK\' \
+            WHEN stock.qoh <= (stock.MIN * 2) THEN \'LOW STOCK\' \
+            ELSE \'SUFFICIENT\' \
+            END AS stockstatus \
+            FROM itemstocks stock \
+            INNER JOIN items ON stock.item_id = items.id \
+            WHERE stock.store_id = ? \
+            ORDER BY criticaltopup ', [params.storeid])
 
     return response.json(itemstock.rows)
  }
@@ -214,6 +224,53 @@ class MenuController {
 
  }
 
+ /**
+  * @swagger
+  * /receive-order/:
+  *   put:
+  *     tags:
+  *      - "Item Stock"
+  *     summary: Update Stock upon receiving an Order
+  *     description: Update Stock upon receiving an Order
+  *     produces:
+  *       - application/json
+  *     security:
+  *       - Bearer: []
+  *     parameters:
+   *       - name: itemid
+   *         description: Id of the Item
+   *         in: formData
+   *         required: true
+   *         type: integer
+   *       - name: storeid
+   *         description: Id of the Store
+   *         in: formData
+   *         required: true
+   *         type: integer
+   *       - name: qty
+   *         description: stock qty to update
+   *         in: formData
+   *         required: true
+   *         type: integer
+  *     responses:
+  *       200:
+  *         description: Current orders is updated
+  */
+ async receiveOrder({ request, response, view }) {
+    const itemId = request.input('itemid')
+    const storeId = request.input('storeid')
+    const qoh = request.input('qty')
+
+    const menu = await Itemstock.query()
+    .where('item_id', itemId)
+    .where('store_id', storeId)
+    .first()
+    menu.qoh = menu.qoh + qoh
+    menu.save()
+    let retMsg = {}
+    retMsg.message = (menu) ? 'Item Stock updated successfully' : 'Update failed'
+    return response.json(retMsg)
+ }
  /**
  * @swagger
  * /store:
