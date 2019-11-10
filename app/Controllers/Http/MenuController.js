@@ -87,17 +87,17 @@ class MenuController {
   *     security:
   *       - Bearer: []
   *     parameters:
-  *       - name: storeId
+  *       - name: storeid
    *         description: Id of the Store
    *         in: formData
    *         required: true
    *         type: integer
-   *       - name: menuId
+   *       - name: menuid
    *         description: Id of the Menu
    *         in: formData
    *         required: true
    *         type: integer
-   *       - name: orderQty
+   *       - name: qty
    *         description: Number of orders made in this Menu Item
    *         in: formData
    *         required: true
@@ -106,10 +106,10 @@ class MenuController {
   *       200:
   *         description: Current orders is updated
   */
- async itemStock ({ request, response }) {
-    const storeId = request.input('storeId')
-    const menuId = request.input('menuId')
-    const orderQty = request.input('orderQty')
+ async reduceItemStock ({ request, response }) {
+    const storeId = request.input('storeid')
+    const menuId = request.input('menuid')
+    const orderQty = request.input('qty')
     let alerts = [];
 
     const menus = await Menu.query()
