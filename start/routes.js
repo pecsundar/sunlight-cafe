@@ -24,12 +24,12 @@ Route
     Route.post('/login', 'AuthController.login')
 
     // Roues for the api's
-    Route.get('/menus/:storeid?', 'MenuController.index').middleware('auth')
-    Route.put('/reduce-item-stock/', 'MenuController.reduceItemStock')//.middleware('auth')
-    Route.get('/stock-level/:storeid', 'MenuController.stockCheck')//.middleware('auth')
-    Route.post('/update-price/', 'MenuController.updatePrice')//.middleware('auth')
-    Route.put('/receive-order/', 'MenuController.receiveOrder')//.middleware('auth')
-    Route.put('/place-order/', 'MenuController.placeOrder')//.middleware('auth')
+    Route.get('/menus/:storeid?', 'MenuController.index')
+    Route.put('/reduce-item-stock/', 'MenuController.reduceItemStock')
+    Route.get('/stock-level/:storeid', 'MenuController.stockCheck')
+    Route.post('/update-price/', 'MenuController.updatePrice')
+    Route.put('/receive-order/', 'MenuController.receiveOrder')
+    Route.put('/place-order/', 'MenuController.placeOrder')
     Route.get('/store/:storeid?', 'MenuController.store')
   })
   .prefix('api/v1')
