@@ -1,6 +1,6 @@
 'use strict'
 const User = use('App/Models/User')
-
+const Store = use('App/Models/Store')
 class AuthController {
   /**
          * @swagger
@@ -67,7 +67,7 @@ class AuthController {
      *         description: login
      */
   async login ({ request, auth, response }) {
-    const { email, password } = request.all()
+    const { email, password, location } = request.all()
 
     try {
       if (await auth.attempt(email, password)) {
@@ -75,6 +75,14 @@ class AuthController {
         const token = await auth.generate(user)
 
         Object.assign(user, token)
+        if(location){
+          const store = await Store.find(location)
+          if(store){
+            let userObj = user.toJSON()
+            userObj['store'] = store.store_name
+            return response.json(userObj)
+          }
+        }
         return response.json(user)
       }
     } catch (e) {
