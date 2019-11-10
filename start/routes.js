@@ -30,10 +30,6 @@ Route
     Route.post('/update-price/', 'MenuController.updatePrice')//.middleware('auth')
     Route.put('/receive-order/', 'MenuController.receiveOrder')//.middleware('auth')
     Route.put('/place-order/', 'MenuController.placeOrder')//.middleware('auth')
-    Route.get('/store/', 'MenuController.store')//.middleware('auth')
-
-    // Route.get('/orders/:id', 'OrderController.show').middleware('auth')
-    // Route.post('/orders', 'OrderController.store').validator('CreateOrder').middleware('auth')
-    // Route.put('/orders/:id', 'OrderController.update').middleware('auth')
+    Route.get('/store/:storeid?', 'MenuController.store')
   })
   .prefix('api/v1')

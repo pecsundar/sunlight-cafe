@@ -127,7 +127,7 @@ class MenuController {
             const useQty = items.pivot.quantity;
             let currentQoh = storeStock.pivot.qoh;
             const minQty = storeStock.pivot.min;
-            const newQoh = currentQoh - (useQty * orderQty);
+            const newQoh = currentQoh - (useQty * parseInt(orderQty));
 
             let updateData = {qoh: newQoh};
             if(newQoh < minQty){
@@ -146,7 +146,7 @@ class MenuController {
         }, alerts);
     trx.commit();
     let retMsg = {}
-    retMsg.message = (alerts.length === 0) ? 'Stock redction success' : alerts
+    retMsg.message = (alerts.length === 0) ? 'Stock reduction success' : alerts
     return response.json(retMsg)
 
  }
@@ -322,7 +322,7 @@ class MenuController {
  }
  /**
  * @swagger
- * /store:
+ * /store/{storeid}:
  *   get:
  *     tags:
  *      - "Store"
@@ -330,12 +330,23 @@ class MenuController {
  *     description: "List all store in Sunlight Cafe"
  *     produces:
  *       - application/json
+ *     parameters:
+ *       - name: storeid
+ *         description: Id of the required Store
+ *         in: path
+ *         required: false
+ *         type: integer
  *     responses:
  *       200:
  *         description: All menus
  */
  async store ({ params, response, view }) {
-    const store = await Store.all()
+    let store
+    if(params.storeid){
+        store = await Store.find(params.storeid)
+    }else{
+        store = await Store.all()
+    }
     return response.json(store)
 
  }
