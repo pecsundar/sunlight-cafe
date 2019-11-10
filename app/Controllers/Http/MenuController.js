@@ -186,7 +186,7 @@ class MenuController {
             FROM itemstocks stock \
             INNER JOIN items ON stock.item_id = items.id \
             WHERE stock.store_id = ? \
-            ORDER BY criticaltopup ', [params.storeid])
+            ORDER BY criticaltopup, items.id ', [params.storeid])
 
     return response.json(itemstock.rows)
  }
@@ -272,6 +272,7 @@ class MenuController {
     .where('store_id', storeId)
     .first()
     menu.qoh = parseInt(menu.qoh) + parseInt(qoh)
+    menu.ordered = false
     menu.save()
     let retMsg = {}
     retMsg.message = (menu) ? 'Item Stock updated successfully' : 'Update failed'
