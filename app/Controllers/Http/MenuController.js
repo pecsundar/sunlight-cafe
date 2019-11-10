@@ -271,7 +271,7 @@ class MenuController {
     .where('item_id', itemId)
     .where('store_id', storeId)
     .first()
-    menu.qoh = menu.qoh + qoh
+    menu.qoh = parseInt(menu.qoh) + parseInt(qoh)
     menu.save()
     let retMsg = {}
     retMsg.message = (menu) ? 'Item Stock updated successfully' : 'Update failed'
