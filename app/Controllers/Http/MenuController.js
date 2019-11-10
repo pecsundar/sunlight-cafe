@@ -129,14 +129,19 @@ class MenuController {
             const minQty = storeStock.pivot.min;
             const newQoh = currentQoh - (useQty * orderQty);
 
+            let updateData = {qoh: newQoh};
             if(newQoh < minQty){
-                alerts.push(items.name + ' is running low on stock')
                 //Place order
-                //Alert Low stock
+                if(items.auto_order){
+                    updateData =  {qoh: newQoh, ordered: true}
+                    alerts.push(items.name + ' is running low on stock and Auto Order is placed')
+                }else{
+                    alerts.push(items.name + ' is running low on stock')
+                }
             }
             await Itemstock.query()
                 .where('id',storeStock.pivot.id)
-                .update({qoh: newQoh})
+                .update(updateData)
 
         }, alerts);
     trx.commit();
@@ -170,13 +175,14 @@ class MenuController {
  */
  async stockCheck ({ params, response, view }) {
     const itemstock = await Database
-    .raw('  SELECT items.name, items.auto_order, stock.qoh, stock.MIN, stock.qoh - stock.MIN AS criticaltopup, \
+    .raw('  SELECT items.id, items.name, items.auto_order, stock.qoh, stock.MIN, stock.qoh - stock.MIN AS criticaltopup, \
             CASE \
             WHEN stock.qoh <= 0 THEN \'NO STOCK\' \
             WHEN stock.qoh <= stock.MIN THEN \'CRITICAL LOW STOCK\' \
             WHEN stock.qoh <= (stock.MIN * 2) THEN \'LOW STOCK\' \
-            ELSE \'SUFFICIENT\' \
-            END AS stockstatus \
+            ELSE \'SUFFICIENT STOCK\' \
+            END AS stockstatus, \
+            stock.ordered \
             FROM itemstocks stock \
             INNER JOIN items ON stock.item_id = items.id \
             WHERE stock.store_id = ? \
@@ -269,6 +275,48 @@ class MenuController {
     menu.save()
     let retMsg = {}
     retMsg.message = (menu) ? 'Item Stock updated successfully' : 'Update failed'
+    return response.json(retMsg)
+ }
+
+ /**
+  * @swagger
+  * /place-order/:
+  *   put:
+  *     tags:
+  *      - "Item Stock"
+  *     summary: Place Stock Order on item
+  *     description: Place Stock Order on item
+  *     produces:
+  *       - application/json
+  *     security:
+  *       - Bearer: []
+  *     parameters:
+   *       - name: itemid
+   *         description: Id of the Item
+   *         in: formData
+   *         required: true
+   *         type: integer
+   *       - name: storeid
+   *         description: Id of the Store
+   *         in: formData
+   *         required: true
+   *         type: integer
+  *     responses:
+  *       200:
+  *         description: Current orders is updated
+  */
+ async placeOrder({ request, response, view }) {
+    const itemId = request.input('itemid')
+    const storeId = request.input('storeid')
+
+    const menu = await Itemstock.query()
+    .where('item_id', itemId)
+    .where('store_id', storeId)
+    .first()
+    menu.ordered = true
+    menu.save()
+    let retMsg = {}
+    retMsg.message = (menu) ? 'Item Stock Order Placed Successfully' : 'Stock Order failed'
     return response.json(retMsg)
  }
  /**
