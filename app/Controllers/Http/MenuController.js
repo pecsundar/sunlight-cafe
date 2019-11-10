@@ -170,7 +170,7 @@ class MenuController {
  */
  async stockCheck ({ params, response, view }) {
     const itemstock = await Database
-    .raw('  SELECT items.name, stock.qoh, stock.MIN, stock.qoh - stock.MIN AS criticaltopup, \
+    .raw('  SELECT items.name, items.auto_order, stock.qoh, stock.MIN, stock.qoh - stock.MIN AS criticaltopup, \
             CASE \
             WHEN stock.qoh <= 0 THEN \'NO STOCK\' \
             WHEN stock.qoh <= stock.MIN THEN \'CRITICAL LOW STOCK\' \
